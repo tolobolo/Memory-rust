@@ -21,6 +21,7 @@ enum Card {
 
 struct Memory {
     tabell: Vec<Card>,
+    found: Vec<usize>,
 }
 
 impl Memory {
@@ -31,7 +32,10 @@ impl Memory {
             tabell.push(card);
         }
 
-        Self { tabell }
+        Self {
+            tabell,
+            found: Vec::new(),
+        }
     }
 
     fn sort_tabell(&mut self) {
@@ -40,7 +44,10 @@ impl Memory {
     }
     fn print_tabell(&self) {
         for (index, num) in self.tabell.iter().enumerate() {
-            print!(" {} ", index)
+            if index % 3 == 0 {
+                println!("\n")
+            }
+            print!("{} ", index)
         }
         println!()
     }
@@ -48,6 +55,7 @@ impl Memory {
     fn steps(&mut self) {
         self.sort_tabell();
         dbg!(&self.tabell);
+
         self.print_tabell();
     }
 }
