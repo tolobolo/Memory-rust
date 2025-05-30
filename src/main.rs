@@ -46,40 +46,59 @@ impl Memory {
         self.tabell.shuffle(&mut rng);
     }
 
-    fn print_tabell(&self, show_index: Option<usize>) {
+    fn print_tabell(&self, show_index1: Option<usize>, show_index2: Option<usize>) {
         for (index, card) in self.tabell.iter().enumerate() {
             if index % 3 == 0 {
                 println!("\n")
             }
             if self.found.contains(&index) {
                 print!("{:?} ", card)
-            } else if show_index.is_some() && show_index.unwrap() == index {
+            } else if show_index1.is_some() && show_index1.unwrap() == index {
+                print!("{:?} ", card)
+            } else if show_index2.is_some() && show_index2.unwrap() == index {
                 print!("{:?} ", card)
             } else {
                 print!("{} ", index)
             }
         }
+
         println!(" ")
     }
 
-    fn flip_card(&self) -> usize {
-        println!("enter a card a card");
+    fn ask_for_number(&self) -> usize {
+        println!("enter a card ");
         let mut input = String::new();
         std::io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        return input
+
+        input
             .trim()
             .parse::<usize>()
-            .expect("Please enter a valid number");
+            .expect("Please enter a valid number")
+    }
+
+    fn round(&mut self) {
+        self.print_tabell(None, None);
+        let index1 = self.ask_for_number();
+        self.print_tabell(Some(index1), None);
+        let index2 = self.ask_for_number();
+        self.print_tabell(Some(index1), Some(index2));
+
+        if index1 == index2 {
+            self.found.push(index1);
+            self.found.push(index2);
+        } else {
+            println!("No a pair.");
+        }
     }
 
     fn steps(&mut self) {
         self.sort_tabell();
         dbg!(&self.tabell);
 
-        self.print_tabell(None);
-        let player_input = self.flip_card();
-        self.print_tabell(Some(player_input));
+        while self.found.len() > self.tabell.len() {
+            self.round();
+        }
     }
 }
