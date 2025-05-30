@@ -1,5 +1,8 @@
+use std::usize;
+
 use rand::rng;
 use rand::seq::SliceRandom;
+use std::io;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -42,20 +45,41 @@ impl Memory {
         let mut rng = rng();
         self.tabell.shuffle(&mut rng);
     }
-    fn print_tabell(&self) {
-        for (index, num) in self.tabell.iter().enumerate() {
+
+    fn print_tabell(&self, show_index: Option<usize>) {
+        for (index, card) in self.tabell.iter().enumerate() {
             if index % 3 == 0 {
                 println!("\n")
             }
-            print!("{} ", index)
+            if self.found.contains(&index) {
+                print!("{:?} ", card)
+            } else if show_index.is_some() && show_index.unwrap() == index {
+                print!("{:?} ", card)
+            } else {
+                print!("{} ", index)
+            }
         }
-        println!()
+        println!(" ")
+    }
+
+    fn flip_card(&self) -> usize {
+        println!("enter a card a card");
+        let mut input = String::new();
+        std::io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+        return input
+            .trim()
+            .parse::<usize>()
+            .expect("Please enter a valid number");
     }
 
     fn steps(&mut self) {
         self.sort_tabell();
         dbg!(&self.tabell);
 
-        self.print_tabell();
+        self.print_tabell(None);
+        let player_input = self.flip_card();
+        self.print_tabell(Some(player_input));
     }
 }
