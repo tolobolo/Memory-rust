@@ -11,7 +11,7 @@ fn main() {
     game.steps()
 }
 
-#[derive(Debug, EnumIter, Clone)]
+#[derive(Debug, EnumIter, Clone, PartialEq)]
 enum Card {
     Box,
     Apple,
@@ -85,11 +85,13 @@ impl Memory {
         let index2 = self.ask_for_number();
         self.print_tabell(Some(index1), Some(index2));
 
-        if index1 == index2 {
+        println!("{:?}", self.tabell[index1]);
+        if self.tabell[index1] == self.tabell[index2] {
+            println!("Found a pair!");
             self.found.push(index1);
             self.found.push(index2);
         } else {
-            println!("No a pair.");
+            println!("Not a pair.");
         }
     }
 
@@ -97,8 +99,9 @@ impl Memory {
         self.sort_tabell();
         dbg!(&self.tabell);
 
-        while self.found.len() > self.tabell.len() {
+        while self.found.len() < self.tabell.len() {
             self.round();
         }
+        println!("Congratulations! You found all pairs.");
     }
 }
