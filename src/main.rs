@@ -2,13 +2,19 @@ use std::usize;
 
 use rand::rng;
 use rand::seq::SliceRandom;
-use std::io;
+use std::thread;
+use std::time::Duration;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 fn main() {
     let mut game = Memory::new();
     game.steps()
+}
+
+fn clear_console(second: u64) {
+    thread::sleep(Duration::new(second, 0));
+    clearscreen::clear().expect("Failed to clear screen");
 }
 
 #[derive(Debug, EnumIter, Clone, PartialEq)]
@@ -81,11 +87,12 @@ impl Memory {
     fn round(&mut self) {
         self.print_tabell(None, None);
         let index1 = self.ask_for_number();
+        clear_console(0);
         self.print_tabell(Some(index1), None);
         let index2 = self.ask_for_number();
+        clear_console(0);
         self.print_tabell(Some(index1), Some(index2));
 
-        println!("{:?}", self.tabell[index1]);
         if self.tabell[index1] == self.tabell[index2] {
             println!("Found a pair!");
             self.found.push(index1);
@@ -97,10 +104,10 @@ impl Memory {
 
     fn steps(&mut self) {
         self.sort_tabell();
-        dbg!(&self.tabell);
-
+        clear_console(0);
         while self.found.len() < self.tabell.len() {
             self.round();
+            clear_console(2);
         }
         println!("Congratulations! You found all pairs.");
     }
