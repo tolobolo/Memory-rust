@@ -1,5 +1,3 @@
-use std::usize;
-
 use rand::rng;
 use rand::seq::SliceRandom;
 use std::thread;
@@ -20,12 +18,13 @@ fn clear_console(second: u64) {
 #[derive(Debug, EnumIter, Clone, PartialEq)]
 enum Card {
     Box,
-    Apple,
+    Boat,
     Dog,
-    Orange,
+    Bed,
     Kiwi,
     Pogo,
     TRex,
+    Tesla,
 }
 
 struct Memory {
@@ -53,25 +52,26 @@ impl Memory {
     }
 
     fn print_tabell(&self, show_index1: Option<usize>, show_index2: Option<usize>) {
+        println!("________________________");
         for (index, card) in self.tabell.iter().enumerate() {
             if index % 4 == 0 {
                 println!("\n")
             }
             if self.found.contains(&index) {
-                print!("{:?} ", card)
+                print!("{:?} |", card)
             } else if show_index1.is_some() && show_index1.unwrap() == index {
-                print!("{:?} ", card)
+                print!("{:?} |", card)
             } else if show_index2.is_some() && show_index2.unwrap() == index {
-                print!("{:?} ", card)
+                print!("{:?} |", card)
             } else {
-                print!("{} ", index)
+                print!("{} |", index)
             }
         }
-
-        println!(" ")
+        println!("\n");
+        println!("________________________")
     }
 
-    fn ask_for_number(&self) -> usize {
+    fn ask_for_number(&self, index1: Option<usize>) -> usize {
         println!("enter a card ");
         let mut input = String::new();
 
@@ -81,7 +81,11 @@ impl Memory {
                 .expect("Failed to read line");
 
             match input.trim().parse::<usize>() {
-                Ok(num) if num < self.tabell.len() => return num,
+                Ok(num)
+                    if num < self.tabell.len() && (index1.is_none() || num != index1.unwrap()) =>
+                {
+                    return num;
+                }
                 _ => {
                     println!("Invalid input. Please enter a valid number.");
                     input.clear();
@@ -92,10 +96,10 @@ impl Memory {
 
     fn round(&mut self) {
         self.print_tabell(None, None);
-        let index1 = self.ask_for_number();
+        let index1 = self.ask_for_number(None);
         clear_console(0);
         self.print_tabell(Some(index1), None);
-        let index2 = self.ask_for_number();
+        let index2 = self.ask_for_number(Some(index1));
         clear_console(0);
         self.print_tabell(Some(index1), Some(index2));
 
