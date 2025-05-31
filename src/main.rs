@@ -54,7 +54,7 @@ impl Memory {
 
     fn print_tabell(&self, show_index1: Option<usize>, show_index2: Option<usize>) {
         for (index, card) in self.tabell.iter().enumerate() {
-            if index % 3 == 0 {
+            if index % 4 == 0 {
                 println!("\n")
             }
             if self.found.contains(&index) {
@@ -74,14 +74,20 @@ impl Memory {
     fn ask_for_number(&self) -> usize {
         println!("enter a card ");
         let mut input = String::new();
-        std::io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
 
-        input
-            .trim()
-            .parse::<usize>()
-            .expect("Please enter a valid number")
+        loop {
+            std::io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            match input.trim().parse::<usize>() {
+                Ok(num) if num < self.tabell.len() => return num,
+                _ => {
+                    println!("Invalid input. Please enter a valid number.");
+                    input.clear();
+                }
+            }
+        }
     }
 
     fn round(&mut self) {
