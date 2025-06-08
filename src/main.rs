@@ -57,11 +57,10 @@ impl Memory {
             if index % 4 == 0 {
                 println!("\n")
             }
-            if self.found.contains(&index) {
-                print!("{:?} |", card)
-            } else if show_index1.is_some() && show_index1.unwrap() == index {
-                print!("{:?} |", card)
-            } else if show_index2.is_some() && show_index2.unwrap() == index {
+            if show_index1.is_some() && show_index1.unwrap() == index
+                || show_index2.is_some() && show_index2.unwrap() == index
+                || self.found.contains(&index)
+            {
                 print!("{:?} |", card)
             } else {
                 print!("{} |", index)
